@@ -3,15 +3,14 @@ import React from 'react';
 import DeckGL from '@deck.gl/react';
 import {ScatterplotLayer} from '@deck.gl/layers';
 import {StaticMap} from 'react-map-gl';
-//import { MapStylePicker } from 'controls';
 
 // Set your mapbox access token here
-const MAPBOX_ACCESS_TOKEN = process.env.REACT_MAPBOX_ACCESS_TOKEN;
+const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 // Initial viewport settings
 const initialViewState = {
-  longitude: 6.4847174678758375,
-  latitude: 51.22546715521443,
+  longitude: 7.80899155236179, 
+  latitude: 51.68114690118967,
   zoom: 15,
   pitch: 0,
   bearing: 0
@@ -20,61 +19,77 @@ const initialViewState = {
 export default class App extends React.Component {
   //initial state
   state = {
+    allTracksData:[],
     data:[],
-    cords:[],
-    style: 'mapbox://styles/mapbox/light-v9'
+    cords:[]
   };
 
   //fetch data from api
   async componentDidMount(){
-    const url="https://envirocar.org/api/stable/measurements";
-    const response = await fetch(url);
-    const data = await response.json();
-    this.setState({data:data})
-    this.getPoints();    
+
+    const urlTracks="https://envirocar.org/api/stable/tracks";
+    
+    var response = await fetch(urlTracks);
+    var dataTracks = await response.json();
+
+    this.getTracksMeasurement(dataTracks.tracks);
+    
   }
 
-  //function to extract cordinates from data
-  getPoints = () => {
-    const cords=[];
-    const data=this.state.data.features;
-    data.forEach((d)=>{
-      cords.push({'lat':d.geometry.coordinates[1],'long':d.geometry.coordinates[0]})
+  //extract ID's of all Tracks
+   getTracksMeasurement = async (tracks) => {
+    var TrackMeasurements=[];
+    var measure=0;
+    var jsonMeasure=0;
+    var i=0;
+    for(i;i<tracks.length;i++){
+      measure = await fetch(`https://envirocar.org/api/stable/tracks/${tracks[i].id}/measurements`);
+      jsonMeasure = await measure.json();
+      TrackMeasurements.push({
+          "trackData":tracks[i],
+          "measurement":jsonMeasure.features
+        }
+      );
+      console.log(i+" fetched");
+    }
+    console.log(jsonMeasure.features);
+    this.setState({
+      allTracksData:TrackMeasurements
     })
-    console.log(process.env.REACT_MAPBOX_ACCESS_TOKEN);
-    this.setState({cords:cords});
   }
-  //toggle styles
-  onStyleChange = style => {
-    this.setState({ style });
-  };
-  // layers = [
-  //   new LineLayer({id: 'line-layer', data})
-  // ];
+
+  //rendering layers
   renderLayers = (props) => {
+      const layers=[];
       const {cords} = props;
-      console.log(cords)
-      return new ScatterplotLayer({
-        id: 'scatterplot',
-        data:cords,
-        getPosition: d => [d.long,d.lat],
-        getColor: d => [0, 128, 255],
-        getRadius: d => 50,
-        opacity: 0.5,
-        pickable: true,
-        radiusMinPixels: 0.25,
-        radiusMaxPixels: 30,
+      //console.log(cords)
+      cords.forEach(track=>{
+        layers.push(
+          new ScatterplotLayer({
+            id:track.trackData.id,
+            data:track.measurement,
+            getPosition: d=>d.geometry.coordinates,
+            getColor: d => [0, 128, 255],
+            getRadius: d => 1500,
+            opacity: 0.5,
+            pickable: true,
+            radiusMinPixels: 0.25,
+            radiusMaxPixels: 30,
+          })
+        )
       })
+      //console.log(layers)
+      return layers
   }
   render() {
     return (
       <DeckGL
         initialViewState={initialViewState}
         controller={true}
-        layers={this.renderLayers({cords:this.state.cords})}
+        layers={this.renderLayers({cords:this.state.allTracksData})}
       >
         <StaticMap 
-        mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN} style={this.state.style}
+          mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
         />
       </DeckGL>
     );

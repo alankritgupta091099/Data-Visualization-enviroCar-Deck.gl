@@ -7,16 +7,15 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "deck.gl": "^8.0.0",
-    "env-cmd": "^8.0.2",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-map-gl": "^5.0.0",
     "react-scripts": "3.4.0"
   },
   "scripts": {
-    "start": "env-cmd .env-cmdrc dev react-scripts start",
-    "build": "env-cmd .env.production react-scripts build",
-    "test": "env-cmd .env.development react-scripts test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
