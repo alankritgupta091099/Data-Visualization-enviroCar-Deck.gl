@@ -24,8 +24,9 @@ export default class App extends React.Component {
     cords:[],
     pointerX: 0,
     pointerY: 0,
-    hoveredObject: null
-  
+    hoveredObject: null,
+    loading:true,
+    trackNo:0  
   };
 
   //fetch data from api
@@ -54,11 +55,15 @@ export default class App extends React.Component {
           "measurement":jsonMeasure.features
         }
       );
-      console.log(i+" fetched");
+      this.setState({
+        trackNo:i
+      })
+      //console.log(i+" fetched");
     }
     console.log(TrackMeasurements);
     this.setState({
-      allTracksData:TrackMeasurements
+      allTracksData:TrackMeasurements,
+      loading:false
     })
   }
 
@@ -131,7 +136,16 @@ export default class App extends React.Component {
       return layers
   }
   render() {
-    return (
+    if(this.state.loading)
+      return(
+          <div style={{margin:'200px 300px 0 300px', textAlign:'center'}}>
+            <h1><i>Fetching all tracks..</i></h1>
+            <p><i>{this.state.trackNo+2} </i>track(s) Fetched</p>
+            <p>Data visualisation is done on following basis -</p>
+             <p> All the tracks are being fetched initially. After this all track measurements are fetched for each track. On hovering over the layers, attributes can be be seen in the flex box and tracks are being coloured on the basis of engineDisplacement</p>
+          </div>
+      ) 
+    else return (
       <div>
         <DeckGL
           initialViewState={initialViewState}
