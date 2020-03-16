@@ -102,7 +102,18 @@ export default class App extends React.Component {
             id:track.trackData.id,
             data:track.measurement,
             getPosition: d=>d.geometry.coordinates,
-            getColor: d => [0, 128, 255],
+            getColor: d => {
+              if(d.properties.sensor.properties.engineDisplacement<1000)
+              {
+                return [Math.floor(d.properties.sensor.properties.engineDisplacement/10),240,240]
+              }
+              else if(d.properties.sensor.properties.engineDisplacement<1700){
+                return [240,Math.floor(d.properties.sensor.properties.engineDisplacement/10),240]
+              }
+              else{
+                return [240,240,Math.floor(d.properties.sensor.properties.engineDisplacement/10)]
+              }
+            },
             getRadius: d => 1500,
             opacity: 0.8,
             radiusMinPixels: 2,
