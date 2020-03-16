@@ -21,7 +21,11 @@ export default class App extends React.Component {
   state = {
     allTracksData:[],
     data:[],
-    cords:[]
+    cords:[],
+    pointerX: 0,
+    pointerY: 0,
+    hoveredObject: null
+  
   };
 
   //fetch data from api
@@ -52,10 +56,39 @@ export default class App extends React.Component {
       );
       console.log(i+" fetched");
     }
-    console.log(jsonMeasure.features);
+    console.log(TrackMeasurements);
     this.setState({
       allTracksData:TrackMeasurements
     })
+  }
+
+  _renderTooltip() {
+    const {hoveredObject, pointerX, pointerY} = this.state || {};
+    //console.log(hoveredObject);   
+    var boxData=""
+    if(hoveredObject)
+    {
+      var arr=hoveredObject.properties.phenomenons 
+      boxData= `Intake Temperature: ${(arr['Intake Temperature'] ? arr['Intake Temperature'].value+arr['Intake Temperature'].unit:``)},Speed: ${(arr['Speed'] ? arr['Speed'].value+arr['Speed'].unit:``)},GPS Bearing: ${(arr['GPS Bearing'] ? arr['GPS Bearing'].value+arr['GPS Bearing'].unit:``)},Rpm: ${(arr['Rpm'] ? arr['Rpm'].value+arr['Rpm'].unit:``)},Throttle Position: ${(arr['Throttle Position'] ? arr['Throttle Position'].value+arr['Throttle Position'].unit:``)},Consumption:${(arr['Consumption'] ? arr['Consumption'].value+arr['Consumption'].unit:``)},CO2: ${(arr['CO2'] ? arr['CO2'].value+arr['CO2'].unit:``)},Calculated MAF: ${(arr['Calculated MAF'] ? arr['Calculated MAF'].value+arr['Calculated MAF'].unit:``)},GPS Altitude:${(arr['GPS Altitude'] ? arr['GPS Altitude'].value+arr['GPS Altitude'].unit:``)},GPS Speed: ${(arr['GPS Speed'] ? arr['GPS Speed'].value+arr['GPS Speed'].unit:``)},Intake Pressure: ${(arr['Intake Pressure'] ? arr['Intake Pressure'].value+arr['Intake Pressure'].unit:``)},Engine Load: ${(arr['Engine Load'] ? arr['Engine Load'].value+arr['Engine Load'].unit:``)},GPS Accuracy: ${(arr['GPS Accuracy'] ? arr['GPS Accuracy'].value+arr['GPS Accuracy'].unit:``)}`
+    }
+    
+    return hoveredObject && (
+      <div style={{
+        display: 'flex',
+        position: 'fixed', 
+        borderRadius:'10px',
+        borderColor:'black',
+        padding:'5px',
+        zIndex: 1, 
+        pointerEvents: 'none', 
+        backgroundColor:'#616161',
+        color:'white',
+        left: pointerX, 
+        top: pointerY
+        }}>
+        {JSON.stringify(boxData)}
+      </div>
+    );
   }
 
   //rendering layers
@@ -71,10 +104,15 @@ export default class App extends React.Component {
             getPosition: d=>d.geometry.coordinates,
             getColor: d => [0, 128, 255],
             getRadius: d => 1500,
-            opacity: 0.5,
+            opacity: 0.8,
+            radiusMinPixels: 2,
+            radiusMaxPixels: 5,
             pickable: true,
-            radiusMinPixels: 0.25,
-            radiusMaxPixels: 30,
+            onHover: info => this.setState({
+              hoveredObject: info.object,
+              pointerX: info.x,
+              pointerY: info.y
+            })
           })
         )
       })
@@ -83,15 +121,20 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <DeckGL
-        initialViewState={initialViewState}
-        controller={true}
-        layers={this.renderLayers({cords:this.state.allTracksData})}
-      >
-        <StaticMap 
-          mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
-        />
-      </DeckGL>
+      <div>
+        <DeckGL
+          initialViewState={initialViewState}
+          controller={true}
+          layers={this.renderLayers({
+            cords:this.state.allTracksData
+          })}
+        >
+          <StaticMap 
+            mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+          />
+          { this._renderTooltip() }
+        </DeckGL>
+      </div>
     );
   }
 }
