@@ -110,13 +110,13 @@ export default class App extends React.Component {
             getColor: d => {
               if(d.properties.sensor.properties.engineDisplacement<1000)
               {
-                return [Math.floor(d.properties.sensor.properties.engineDisplacement/10),240,240]
+                return [57,144,0]
               }
               else if(d.properties.sensor.properties.engineDisplacement<1700){
-                return [240,Math.floor(d.properties.sensor.properties.engineDisplacement/10),240]
+                return [99,196,228]
               }
               else{
-                return [240,240,Math.floor(d.properties.sensor.properties.engineDisplacement/10)]
+                return [119,119,102]
               }
             },
             getRadius: d => 1500,
