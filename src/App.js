@@ -9,9 +9,9 @@ const MAPBOX_ACCESS_TOKEN = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 // Initial viewport settings
 const initialViewState = {
-  longitude: 7.80899155236179, 
-  latitude: 51.68114690118967,
-  zoom: 15,
+  longitude: 7.588491060909099, 
+  latitude: 51.96910699949048, 
+  zoom: 7.5,
   pitch: 0,
   bearing: 0
 };
@@ -32,7 +32,7 @@ export default class App extends React.Component {
   //fetch data from api
   async componentDidMount(){
 
-    const urlTracks="https://envirocar.org/api/stable/tracks";
+    const urlTracks="https://envirocar.org/api/stable/tracks?bbox=7.0,51.1,7.3,52.0";
     
     var response = await fetch(urlTracks);
     var dataTracks = await response.json();
