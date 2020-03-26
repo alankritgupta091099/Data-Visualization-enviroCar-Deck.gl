@@ -48,12 +48,10 @@ export default class App extends React.Component {
     var jsonMeasure=0;
     var i=0;
     for(i;i<tracks.length;i++){
-      measure = await fetch(`https://envirocar.org/api/stable/tracks/${tracks[i].id}/measurements`);
+      measure = await fetch(`https://envirocar.org/api/stable/tracks/${tracks[i].id}`);
       jsonMeasure = await measure.json();
-      TrackMeasurements.push({
-          "trackData":tracks[i],
-          "measurement":jsonMeasure.features
-        }
+      TrackMeasurements.push(
+        jsonMeasure
       );
       this.setState({
         trackNo:i
@@ -100,25 +98,27 @@ export default class App extends React.Component {
   renderLayers = (props) => {
       const layers=[];
       const {cords} = props;
+      var tc;
       //console.log(cords)
       cords.forEach(track=>{
+       tc=track.properties.sensor.properties.engineDisplacement;
         layers.push(
           new ScatterplotLayer({
-            id:track.trackData.id,
-            data:track.measurement,
+            id: track.properties.id,
+            data: track.features,
             getPosition: d=>d.geometry.coordinates,
             getColor: d => {
-              if(d.properties.sensor.properties.engineDisplacement<1000)
+              if(tc<1000)
               {
                 return [57,144,0]
               }
-              else if(d.properties.sensor.properties.engineDisplacement<1700){
+              else if(tc<1800){
                 return [99,196,228]
               }
               else{
                 return [119,119,102]
               }
-            },
+            },            
             getRadius: d => 1500,
             opacity: 0.8,
             radiusMinPixels: 2,
@@ -142,7 +142,7 @@ export default class App extends React.Component {
             <h1><i>Fetching all tracks..</i></h1>
             <p><i>{this.state.trackNo+2} </i>track(s) Fetched</p>
             <p>Data visualisation is done on following basis -</p>
-             <p> All the tracks are being fetched initially. After this all track measurements are fetched for each track. On hovering over the layers, attributes can be be seen in the flex box and tracks are being coloured on the basis of engineDisplacement</p>
+             <p> All the tracks are being fetched initially. After this all track data is being fetched for each track. On hovering over the layers, attributes can be be seen in the flex box and tracks are being coloured on the basis of engineDisplacement</p>
           </div>
       ) 
     else return (
