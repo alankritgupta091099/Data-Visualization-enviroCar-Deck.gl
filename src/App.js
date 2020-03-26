@@ -12,8 +12,8 @@ const initialViewState = {
   longitude: 7.588491060909099, 
   latitude: 51.96910699949048, 
   zoom: 7.5,
-  pitch: 0,
-  bearing: 0
+  pitch: 50,
+  bearing: 5
 };
 
 export default class App extends React.Component {
@@ -67,29 +67,50 @@ export default class App extends React.Component {
 
   _renderTooltip() {
     const {hoveredObject, pointerX, pointerY} = this.state || {};
-    //console.log(hoveredObject);   
+    console.log(hoveredObject);   
     var boxData=""
     if(hoveredObject)
     {
       var arr=hoveredObject.properties.phenomenons 
-      boxData= `Intake Temperature: ${(arr['Intake Temperature'] ? arr['Intake Temperature'].value+arr['Intake Temperature'].unit:``)},Speed: ${(arr['Speed'] ? arr['Speed'].value+arr['Speed'].unit:``)},GPS Bearing: ${(arr['GPS Bearing'] ? arr['GPS Bearing'].value+arr['GPS Bearing'].unit:``)},Rpm: ${(arr['Rpm'] ? arr['Rpm'].value+arr['Rpm'].unit:``)},Throttle Position: ${(arr['Throttle Position'] ? arr['Throttle Position'].value+arr['Throttle Position'].unit:``)},Consumption:${(arr['Consumption'] ? arr['Consumption'].value+arr['Consumption'].unit:``)},CO2: ${(arr['CO2'] ? arr['CO2'].value+arr['CO2'].unit:``)},Calculated MAF: ${(arr['Calculated MAF'] ? arr['Calculated MAF'].value+arr['Calculated MAF'].unit:``)},GPS Altitude:${(arr['GPS Altitude'] ? arr['GPS Altitude'].value+arr['GPS Altitude'].unit:``)},GPS Speed: ${(arr['GPS Speed'] ? arr['GPS Speed'].value+arr['GPS Speed'].unit:``)},Intake Pressure: ${(arr['Intake Pressure'] ? arr['Intake Pressure'].value+arr['Intake Pressure'].unit:``)},Engine Load: ${(arr['Engine Load'] ? arr['Engine Load'].value+arr['Engine Load'].unit:``)},GPS Accuracy: ${(arr['GPS Accuracy'] ? arr['GPS Accuracy'].value+arr['GPS Accuracy'].unit:``)}`
+      boxData= `<div>
+      ${(arr['Intake Temperature'] ? "<b>Intake Temperature: </b> <i>"+arr['Intake Temperature'].value+ arr['Intake Temperature'].unit+"</i><br>":``)}
+      ${(arr['Speed'] ?"<b>Speed: </b><i>"+arr['Speed'].value+arr['Speed'].unit+"</i><br>":``)} 
+      ${(arr['GPS Bearing'] ?"<b>GPS Bearing: </b><i>"+arr['GPS Bearing'].value+arr['GPS Bearing'].unit+"</i> ,<br>":``)}
+      ${(arr['Rpm'] ?"<b>Rpm: </b><i>"+arr['Rpm'].value+arr['Rpm'].unit+"</i><br>":``)}
+      ${(arr['Throttle Position'] ?"<b>Throttle Position: </b><i>"+arr['Throttle Position'].value+arr['Throttle Position'].unit+"</i><br>":``)}
+      ${(arr['Consumption'] ?"<b>Consumption: </b><i>"+arr['Consumption'].value+arr['Consumption'].unit+"</i><br>":``)}
+      ${(arr['CO2'] ?"<b>CO2: </b><i>"+arr['CO2'].value+arr['CO2'].unit+"</i><br>":``)}
+      ${(arr['Calculated MAF'] ?"<b>Calculated MAF: </b><i>"+arr['Calculated MAF'].value+arr['Calculated MAF'].unit+"</i><br>":``)}
+      ${(arr['GPS Altitude'] ?"<b>GPS Altitude: </b><i>"+arr['GPS Altitude'].value+arr['GPS Altitude'].unit+"</i><br>":``)}
+      ${(arr['GPS Speed'] ?"<b>GPS Speed: </b><i>"+arr['GPS Speed'].value+arr['GPS Speed'].unit+" </i><br>":``)}
+      ${(arr['Intake Pressure'] ?"<b>Intake Pressure: </b><i>"+arr['Intake Pressure'].value+arr['Intake Pressure'].unit+"</i><br>":``)}
+      ${(arr['Engine Load'] ?"<b>Engine Load: </b><i>"+arr['Engine Load'].value+arr['Engine Load'].unit+"</i><br>":``)}
+      ${(arr['GPS Accuracy'] ?"<b>GPS Accuracy: </b><i>"+arr['GPS Accuracy'].value+arr['GPS Accuracy'].unit+"</i>":``)}
+      </div>`
     }
     
     return hoveredObject && (
-      <div style={{
+      <div 
+      style={{
         display: 'flex',
         position: 'fixed', 
-        borderRadius:'10px',
-        borderColor:'black',
+        borderRadius:'3px',
         padding:'5px',
         zIndex: 1, 
+        fontFamily:'Ubuntu',
+        textTransform:'uppercase',
+        width:'360px',
+        height:'auto',
         pointerEvents: 'none', 
-        backgroundColor:'#616161',
-        color:'white',
+        backgroundColor:'#F9F947',
+        color:'#424242',
         left: pointerX, 
         top: pointerY
+        }}      
+      dangerouslySetInnerHTML={{
+        __html:boxData
         }}>
-        {JSON.stringify(boxData)}
+
       </div>
     );
   }
@@ -98,31 +119,29 @@ export default class App extends React.Component {
   renderLayers = (props) => {
       const layers=[];
       const {cords} = props;
-      var tc;
       //console.log(cords)
       cords.forEach(track=>{
-       tc=track.properties.sensor.properties.engineDisplacement;
         layers.push(
           new ScatterplotLayer({
             id: track.properties.id,
             data: track.features,
             getPosition: d=>d.geometry.coordinates,
             getColor: d => {
-              if(tc<1000)
+              if(track.properties.sensor.properties.engineDisplacement<1600)
               {
-                return [57,144,0]
+                return [250,162,0]
               }
-              else if(tc<1800){
-                return [99,196,228]
+              else if(track.properties.sensor.properties.engineDisplacement<1800){
+                return [126,212,2]
               }
               else{
-                return [119,119,102]
+                return [249,249,71]
               }
             },            
-            getRadius: d => 1500,
-            opacity: 0.8,
-            radiusMinPixels: 2,
-            radiusMaxPixels: 5,
+            getRadius: d => 20,
+            opacity: 1,
+            radiusMinPixels: 1,
+            radiusMaxPixels: 4,
             pickable: true,
             onHover: info => this.setState({
               hoveredObject: info.object,
@@ -156,6 +175,7 @@ export default class App extends React.Component {
         >
           <StaticMap 
             mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
+            mapStyle={'mapbox://styles/mapbox/dark-v10'}
           />
           { this._renderTooltip() }
         </DeckGL>
