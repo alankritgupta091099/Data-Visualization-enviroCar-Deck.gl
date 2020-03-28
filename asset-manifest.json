@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/Data-Visualization-enviroCar-Deck.gl/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "/Data-Visualization-enviroCar-Deck.gl/static/js/main.23a67edf.chunk.js",
+    "main.js.map": "/Data-Visualization-enviroCar-Deck.gl/static/js/main.23a67edf.chunk.js.map",
+    "runtime-main.js": "/Data-Visualization-enviroCar-Deck.gl/static/js/runtime-main.c05116ae.js",
+    "runtime-main.js.map": "/Data-Visualization-enviroCar-Deck.gl/static/js/runtime-main.c05116ae.js.map",
+    "static/js/2.ccf26637.chunk.js": "/Data-Visualization-enviroCar-Deck.gl/static/js/2.ccf26637.chunk.js",
+    "static/js/2.ccf26637.chunk.js.map": "/Data-Visualization-enviroCar-Deck.gl/static/js/2.ccf26637.chunk.js.map",
+    "index.html": "/Data-Visualization-enviroCar-Deck.gl/index.html",
+    "precache-manifest.bbd4def703d3caf98484628c2d7f5155.js": "/Data-Visualization-enviroCar-Deck.gl/precache-manifest.bbd4def703d3caf98484628c2d7f5155.js",
+    "service-worker.js": "/Data-Visualization-enviroCar-Deck.gl/service-worker.js",
+    "static/css/main.5ecd60fb.chunk.css.map": "/Data-Visualization-enviroCar-Deck.gl/static/css/main.5ecd60fb.chunk.css.map",
+    "static/js/2.ccf26637.chunk.js.LICENSE.txt": "/Data-Visualization-enviroCar-Deck.gl/static/js/2.ccf26637.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.c05116ae.js",
+    "static/js/2.ccf26637.chunk.js",
+    "static/css/main.5ecd60fb.chunk.css",
+    "static/js/main.23a67edf.chunk.js"
+  ]
+}
