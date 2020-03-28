@@ -2,6 +2,7 @@
   "name": "react_deckgl",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://alankritgupta091099.github.io/Data-Visualization-enviroCar-Deck.gl",
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -16,7 +17,9 @@
     "start": "react-scripts --max_old_space_size=524288 start",
     "build": "react-scripts --max_old_space_size=524288 build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -32,5 +35,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^2.2.0"
   }
 }
